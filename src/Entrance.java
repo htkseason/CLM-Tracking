@@ -80,8 +80,7 @@ public class Entrance {
 			ShapeInstance shape = new ShapeInstance(sm);
 			shape.setFromParams(faceRect.width * 0.9, 0, faceRect.x + faceRect.width / 2,
 					faceRect.y + faceRect.height / 2 + faceRect.height * 0.12);
-			RegressorSetInstance regSet = new RegressorSetInstance();
-			regSet.load(myPatches, new Size(41, 41), myRefShape);
+			RegressorSetInstance regSet = RegressorSetInstance.load(myPatches, new Size(41, 41), myRefShape);
 			regSet.setCurPts(shape.getX());
 
 			while (true) {
