@@ -45,7 +45,7 @@ public class Entrance {
 		ShapeModelTrain.train("models/shape/", 0.90, false);
 
 		ShapeModel sm = ShapeModel.load("models/shape/", "V", "Z_e");
-		FaceDetector.init("lbpcascade_frontalface.xml");
+		FaceDetector fd = FaceDetector.load("lbpcascade_frontalface.xml");
 		Mat patches = ImUtils.loadMat("models/regressor/patch_76");
 		Mat refShape = ImUtils.loadMat("models/regressor/refShape");
 
@@ -74,7 +74,7 @@ public class Entrance {
 				vc.read(pic);
 				Imgproc.cvtColor(pic, pic, Imgproc.COLOR_BGR2GRAY);
 				// ImUtils.imshow(pic);
-				faceRect = FaceDetector.searchFace(pic);
+				faceRect = fd.searchFace(pic);
 				System.out.println(faceRect);
 			}
 			ShapeInstance shape = new ShapeInstance(sm);
