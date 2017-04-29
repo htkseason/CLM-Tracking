@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -13,6 +14,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 import pers.season.vml.statistics.regressor.LearningParams;
+import pers.season.vml.statistics.regressor.RegressorSet;
 import pers.season.vml.statistics.regressor.RegressorSetInstance;
 import pers.season.vml.statistics.regressor.RegressorTrain;
 import pers.season.vml.statistics.shape.ShapeInstance;
@@ -34,35 +36,15 @@ public class Entrance {
 		// train();
 		VideoCapture vc = new VideoCapture();
 		vc.open(0);
-		// int[] myIgnore = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
-		// ,68,69,70,71,72,73,74,75};
-		// int[] myIgnore = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-		// 12, 13, 14 };
-		// int[] myIgnore = new int[]
-		// {48,49,50,51,52,53,54,55,56,57,58,59,68,69,70,71,72,73,74,75};
-		int[] myIgnore = new int[] {};
-		MuctData.init("e:/muct/jpg", "e:/muct/muct76-opencv.csv", myIgnore);
+
+		MuctData.init("e:/muct/jpg", "e:/muct/muct76-opencv.csv", MuctData.no_ignore);
 		ShapeModelTrain.train("models/shape/", 0.90, false);
 
 		ShapeModel sm = ShapeModel.load("models/shape/", "V", "Z_e");
-		FaceDetector fd = FaceDetector.load("lbpcascade_frontalface.xml");
-		Mat patches = ImUtils.loadMat("models/regressor/patch_76");
-		Mat refShape = ImUtils.loadMat("models/regressor/refShape");
+		FaceDetector fd = FaceDetector.load("models/lbpcascade_frontalface.xml");
+		RegressorSet rs = RegressorSet.load("models/regressor/", "patch_76", "refShape", new Size(41, 41));
+		RegressorSetInstance rsi = new RegressorSetInstance(rs);
 
-		Mat myPatches = new Mat();
-		Mat myRefShape = new Mat();
-		Arrays.sort(myIgnore);
-
-		for (int i = 0; i < patches.cols(); i++) {
-			if (Arrays.binarySearch(myIgnore, i) >= 0)
-				continue;
-			else {
-				myPatches.push_back(patches.col(i).t());
-				myRefShape.push_back(refShape.row(i * 2));
-				myRefShape.push_back(refShape.row(i * 2 + 1));
-			}
-		}
-		myPatches = myPatches.t();
 		JFrame win = new JFrame();
 		// Mat pic = Imgcodecs.imread("test.jpg", Imgcodecs.IMREAD_GRAYSCALE);
 		// Mat pic = MuctData.getGrayJpg(2);
@@ -74,14 +56,15 @@ public class Entrance {
 				vc.read(pic);
 				Imgproc.cvtColor(pic, pic, Imgproc.COLOR_BGR2GRAY);
 				// ImUtils.imshow(pic);
-				faceRect = fd.searchFace(pic);
+				List<Rect> faceRectList = fd.searchFace(pic);
+				faceRect = faceRectList.isEmpty() ? null : faceRectList.get(0);
 				System.out.println(faceRect);
 			}
 			ShapeInstance shape = new ShapeInstance(sm);
 			shape.setFromParams(faceRect.width * 0.9, 0, faceRect.x + faceRect.width / 2,
 					faceRect.y + faceRect.height / 2 + faceRect.height * 0.12);
-			RegressorSetInstance regSet = RegressorSetInstance.load(myPatches, new Size(41, 41), myRefShape);
-			regSet.setCurPts(shape.getX());
+
+			rsi.setCurPts(shape.getX());
 
 			while (true) {
 				pic = new Mat();
@@ -91,7 +74,7 @@ public class Entrance {
 
 				ImUtils.startTiming();
 
-				Mat dstPts = regSet.track(pic, new Size(21, 21));
+				Mat dstPts = rsi.track(pic, new Size(21, 21));
 
 				Mat sPic = pic.clone();
 				Imgproc.cvtColor(sPic, sPic, Imgproc.COLOR_GRAY2BGR);
@@ -107,14 +90,14 @@ public class Entrance {
 
 					if (abnormal > 0.15) {
 						System.out.println(abnormal);
-						sm.clamp(z, 0);
+						sm.clamp(z, 3);
 					} else {
 						sm.clamp(z, 3);
 					}
 				}
 				dstPts = sm.getXfromZ(z);
 
-				regSet.setCurPts(dstPts);
+				rsi.setCurPts(dstPts);
 
 				for (int i = 0; i < dstPts.rows() / 2; i++) {
 					Imgproc.circle(sPic, new Point(dstPts.get(i * 2, 0)[0], dstPts.get(i * 2 + 1, 0)[0]), 2,
