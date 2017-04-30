@@ -58,7 +58,7 @@ public class Entrance {
 				// ImUtils.imshow(pic);
 				List<Rect> faceRectList = fd.searchFace(pic);
 				faceRect = faceRectList.isEmpty() ? null : faceRectList.get(0);
-				System.out.println(faceRect);
+				ImUtils.imshow(win, pic, 1);
 			}
 			ShapeInstance shape = new ShapeInstance(sm);
 			shape.setFromParams(faceRect.width * 0.9, 0, faceRect.x + faceRect.width / 2,
@@ -82,13 +82,13 @@ public class Entrance {
 				Mat z = sm.getZfromX(dstPts);
 				double abnormal = Core.norm(dstPts, sm.getXfromZ(z)) / sm.getScale(z);
 
-				if (abnormal > 0.18) {
+				if (abnormal > 0.23) {
 					System.err.println(abnormal);
 					// ShapeModel.clamp(z, 0);
 					break;
 				} else {
 
-					if (abnormal > 0.15) {
+					if (abnormal > 0.20) {
 						System.out.println(abnormal);
 						sm.clamp(z, 3);
 					} else {
