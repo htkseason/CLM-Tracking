@@ -80,28 +80,22 @@ public class Entrance {
 				Imgproc.cvtColor(sPic, sPic, Imgproc.COLOR_GRAY2BGR);
 
 				Mat z = sm.getZfromX(dstPts);
+				sm.clamp(z, 3);
 				double abnormal = Core.norm(dstPts, sm.getXfromZ(z)) / sm.getScale(z);
-
-				if (abnormal > 0.23) {
+				if (abnormal > 0.22) {
 					System.err.println(abnormal);
 					// ShapeModel.clamp(z, 0);
 					break;
 				} else {
-
-					if (abnormal > 0.20) {
-						System.out.println(abnormal);
-						sm.clamp(z, 3);
-					} else {
-						sm.clamp(z, 3);
-					}
+					
 				}
 				dstPts = sm.getXfromZ(z);
 
 				rsi.setCurPts(dstPts);
 
 				for (int i = 0; i < dstPts.rows() / 2; i++) {
-					Imgproc.circle(sPic, new Point(dstPts.get(i * 2, 0)[0], dstPts.get(i * 2 + 1, 0)[0]), 2,
-							new Scalar(0, 0, 255));
+					Imgproc.circle(sPic, new Point(dstPts.get(i * 2, 0)[0], dstPts.get(i * 2 + 1, 0)[0]), 1,
+							new Scalar(0, 0, 255), 2);
 				}
 
 				ImUtils.imshow(win, sPic, 1);
