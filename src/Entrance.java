@@ -41,8 +41,10 @@ public class Entrance {
 		ShapeModelTrain.train("models/shape/", 0.90, false);
 
 		ShapeModel sm = ShapeModel.load("models/shape/", "V", "Z_e");
+		// ShapeModelTrain.visualize(sm);
+
 		FaceDetector fd = FaceDetector.load("models/lbpcascade_frontalface.xml");
-		RegressorSet rs = RegressorSet.load("models/regressor/", "patch_76", "refShape", new Size(41, 41));
+		RegressorSet rs = RegressorSet.load("models/regressor/", "patch_76_size61", "refShape", new Size(61, 61));
 		RegressorSetInstance rsi = new RegressorSetInstance(rs);
 
 		JFrame win = new JFrame();
@@ -81,22 +83,24 @@ public class Entrance {
 
 				Mat z = sm.getZfromX(dstPts);
 				sm.clamp(z, 3);
-				double abnormal = Core.norm(dstPts, sm.getXfromZ(z)) / sm.getScale(z);
-				if (abnormal > 0.22) {
+				Mat dspPtsClamped = sm.getXfromZ(z);
+				double abnormal = Core.norm(dstPts, dspPtsClamped) / sm.getScale(z);
+				if (abnormal > 0.20) {
 					System.err.println(abnormal);
-					// ShapeModel.clamp(z, 0);
 					break;
 				} else {
-					
-				}
-				dstPts = sm.getXfromZ(z);
 
-				rsi.setCurPts(dstPts);
-
-				for (int i = 0; i < dstPts.rows() / 2; i++) {
-					Imgproc.circle(sPic, new Point(dstPts.get(i * 2, 0)[0], dstPts.get(i * 2 + 1, 0)[0]), 1,
-							new Scalar(0, 0, 255), 2);
 				}
+
+				for (int i = 0; i < dspPtsClamped.rows() / 2; i++) {
+					Imgproc.circle(sPic, new Point(dspPtsClamped.get(i * 2, 0)[0], dspPtsClamped.get(i * 2 + 1, 0)[0]),
+							1, new Scalar(0, 0, 255), 2);
+				}
+
+				Mat nxtPts = Mat.zeros(z.size(), z.type());
+				int reserveParams = 4 + 4;
+				z.rowRange(0, reserveParams).copyTo(nxtPts.rowRange(0, reserveParams));
+				rsi.setCurPts(sm.getXfromZ(nxtPts));
 
 				ImUtils.imshow(win, sPic, 1);
 				// ImUtils.printTiming();
@@ -113,7 +117,7 @@ public class Entrance {
 		Mat thetaSet = new Mat();
 		for (int i = 0; i < MuctData.getPtsCounts(); i++) {
 			System.out.println("training patch " + i + " ...");
-			Mat theta = RegressorTrain.trainLinearModel(refShape, i, new Size(41, 41), new Size(21, 21), 2, 0.2,
+			Mat theta = RegressorTrain.trainLinearModel(refShape, i, new Size(61, 61), new Size(61, 61), 3, 0.2,
 					new LearningParams());
 			thetaSet.push_back(theta.t());
 			System.gc();
