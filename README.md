@@ -12,6 +12,6 @@ __Using Condition__
 ¡¤ Frontal face only. (rotation in about ¡À30¡ã is acceptable)  
   
 __Demo__  
-![demo]()  
+![demo](https://github.com/htkseason/ASM-Tracking/blob/master/demo.jpg)  
   
 reference [Cootes and C.J.Taylor. Statistical Models of Appearance for Computer Vision. University of Manchester, March 2004]
