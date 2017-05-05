@@ -1,5 +1,5 @@
 # ASM-Tracking  
-Using Vision-Model-Lib to apply an ASM tracking algorithm.  
+Using Vision-Model-Lib to implement ASM algorithm which can track facial feature points.  
 Before using this project, you should __include VisionModelLib to classpath first__. It can be found in my repositories.  
   
 ----  
