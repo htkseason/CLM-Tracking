@@ -38,7 +38,7 @@ public class Entrance {
 		vc.open(0);
 
 		MuctData.init("e:/muct/jpg", "e:/muct/muct76-opencv.csv", MuctData.no_ignore);
-		ShapeModelTrain.train("models/shape/", 0.90, false);
+		//ShapeModelTrain.train("models/shape/", 0.90, false);
 
 		ShapeModel sm = ShapeModel.load("models/shape/", "V", "Z_e");
 		// ShapeModelTrain.visualize(sm);
@@ -48,11 +48,13 @@ public class Entrance {
 		RegressorSetInstance rsi = new RegressorSetInstance(rs);
 
 		JFrame win = new JFrame();
-		// Mat pic = Imgcodecs.imread("test.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-		// Mat pic = MuctData.getGrayJpg(2);
+		
+
 		while (true) {
 			Mat pic = null;
 			Rect faceRect = null;
+			
+			// search face
 			while (faceRect == null || faceRect.width < 100) {
 				pic = new Mat();
 				vc.read(pic);
@@ -62,28 +64,34 @@ public class Entrance {
 				faceRect = faceRectList.isEmpty() ? null : faceRectList.get(0);
 				ImUtils.imshow(win, pic, 1);
 			}
+			
+			// initiate points position
 			ShapeInstance shape = new ShapeInstance(sm);
 			shape.setFromParams(faceRect.width * 0.9, 0, faceRect.x + faceRect.width / 2,
 					faceRect.y + faceRect.height / 2 + faceRect.height * 0.12);
-
 			rsi.setCurPts(shape.getX());
 
+			
 			while (true) {
 				pic = new Mat();
 				vc.read(pic);
 				Imgproc.cvtColor(pic, pic, Imgproc.COLOR_BGR2GRAY);
+				
 				pic.convertTo(pic, CvType.CV_32F);
-
+				
+				Mat sPic = pic.clone();
 				ImUtils.startTiming();
-
+				
+				// track the new frame
 				Mat dstPts = rsi.track(pic, new Size(21, 21));
 
-				Mat sPic = pic.clone();
 				Imgproc.cvtColor(sPic, sPic, Imgproc.COLOR_GRAY2BGR);
 
+				// clamp the shape (using shape model)
 				Mat z = sm.getZfromX(dstPts);
 				sm.clamp(z, 3);
 				Mat dspPtsClamped = sm.getXfromZ(z);
+				// evaluate abnormal ranking
 				double abnormal = Core.norm(dstPts, dspPtsClamped) / sm.getScale(z);
 				if (abnormal > 0.20) {
 					System.err.println(abnormal);
@@ -91,19 +99,20 @@ public class Entrance {
 				} else {
 
 				}
-
+				
+				// draw points
 				for (int i = 0; i < dspPtsClamped.rows() / 2; i++) {
 					Imgproc.circle(sPic, new Point(dspPtsClamped.get(i * 2, 0)[0], dspPtsClamped.get(i * 2 + 1, 0)[0]),
 							1, new Scalar(0, 0, 255), 2);
 				}
 
+				// conservative set next starting point positions  
 				Mat nxtPts = Mat.zeros(z.size(), z.type());
 				int reserveParams = 4 + 4;
 				z.rowRange(0, reserveParams).copyTo(nxtPts.rowRange(0, reserveParams));
 				rsi.setCurPts(sm.getXfromZ(nxtPts));
 
 				ImUtils.imshow(win, sPic, 1);
-				// ImUtils.printTiming();
 				System.gc();
 
 			}
