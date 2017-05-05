@@ -9,7 +9,7 @@ __Using Condition__
 --Recommend an appropriate illumination which face should be clear and not has a strong contrast.  
 --This is a SINGLE face tracking demo.  
 --Do not move rapidly while low fps.  
---Frontal face only. (rotation in about ¡À30¡ã is acceptable)  
+--Frontal face only. (rotation in about ¡À30 degrees is acceptable)  
   
 __Demo__  
 ![demo](https://github.com/htkseason/ASM-Tracking/blob/master/demo.jpg)  
