@@ -1,12 +1,12 @@
 # ASM-Tracking  
-Using Vision-Model-Lib to implement ASM algorithm which can track facial feature points.  
-Before using this project, you should __include VisionModelLib to classpath first__. It can be found in my repositories.  
+ASM(Active Shape Model) facial features tracking algorithm implement. (Including model training kit)   
+Before using this project, __VisionModelLib meant to be included to classpath__. It can be found in my repositories.  
   
 ----  
   
 __Using Condition__  
 --Web camera is required.  
---Recommend an appropriate illumination which face should be clear and not has a strong contrast.  
+--An appropriate illumination which face should be clear.  
 --This is a SINGLE face tracking demo.  
 --Do not move rapidly while low fps.  
 --Frontal face only. (rotation in about 30 degrees is acceptable)  
