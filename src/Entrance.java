@@ -8,6 +8,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -88,8 +89,8 @@ public class Entrance {
 				// clamp the shape (using shape model)
 				Mat z = sm.getZfromX(dstPts);
 				sm.clamp(z, 3);
-				Rect rect = sm.getLocation(z);
-				Imgproc.rectangle(sPic, rect.tl(), rect.br(), new Scalar(255, 255, 255), 2);
+				RotatedRect roRect = sm.getLocation(z);
+				ImUtils.drawRotatedRect(sPic, roRect, 2);
 				Mat dspPtsClamped = sm.getXfromZ(z);
 				// evaluate abnormal ranking
 				double abnormal = Core.norm(dstPts, dspPtsClamped) / sm.getScale(z);
