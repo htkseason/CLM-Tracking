@@ -6,7 +6,7 @@ Before using this project, __VisionModelLib meant to be included to classpath__.
   
 __Using Condition__  
 --Web camera is required.  
---An appropriate illumination which face should be clear.  
+--An appropriate illumination.  
 --This is a SINGLE face tracking demo.  
 --Do not move rapidly while low fps.  
 --Frontal face only. (rotation in about 30 degrees is acceptable)  
