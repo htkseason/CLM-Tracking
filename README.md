@@ -14,4 +14,6 @@ __Using Condition__
 __Demo__  
 ![demo](https://github.com/htkseason/ASM-Tracking/blob/master/demo.jpg)  
   
+----
+  
 reference [Cootes and C.J.Taylor. Statistical Models of Appearance for Computer Vision. University of Manchester, March 2004]
