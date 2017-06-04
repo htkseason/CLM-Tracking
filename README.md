@@ -16,4 +16,6 @@ __Demo__
   
 ----
   
-reference [Cootes and C.J.Taylor. Statistical Models of Appearance for Computer Vision. University of Manchester, March 2004]
+[Cootes and C.J.Taylor. Statistical Models of Appearance for Computer Vision. University of Manchester, March 2004](http://www.face-rec.org/algorithms/AAM/app_models.pdf)  
+  
+[github.com/MasteringOpenCV](https://github.com/MasteringOpenCV/code)  
