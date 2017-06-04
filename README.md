@@ -1,6 +1,6 @@
 # ASM-Tracking  
-ASM(Active Shape Model) facial features tracking algorithm implement. (Including model training kit)   
-Before using this project, __VisionModelLib meant to be included to classpath__. It can be found in my repositories.  
+ASM(Active Shape Model) facial features tracking algorithm implement. (Include model training kit)   
+This project is based on [VisionModelLib](https://github.com/htkseason/VisionModelLib) and [OpenCV 3.2.0](http://opencv.org/releases.html).  
   
 ----  
   
@@ -12,7 +12,7 @@ __Using Condition__
 --Frontal face only. (rotation in about 30 degrees is acceptable)  
   
 __Demo__  
-![demo](https://github.com/htkseason/ASM-Tracking/blob/master/demo.jpg)  
+<img src="https://github.com/htkseason/ASM-Tracking/blob/master/demo.jpg" width="75%" alt="demo" />  
   
 ----
   
