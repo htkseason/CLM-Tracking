@@ -12,7 +12,7 @@ __Using Condition__
 --Frontal face only. (rotation in about 30 degrees is acceptable)  
   
 __Demo__  
-<img src="https://github.com/htkseason/ASM-Tracking/blob/master/demo.jpg" width="75%" alt="demo" />  
+<img src="https://github.com/htkseason/ASM-Tracking/blob/master/demo.jpg" width="100%" alt="demo" />  
   
 ----
   
