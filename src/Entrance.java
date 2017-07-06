@@ -30,10 +30,27 @@ public class Entrance {
 		// todo: x64/x86 judge
 		// System.loadLibrary("lib/opencv_java2413_x64");
 		System.loadLibrary("lib/opencv_java320_x64");
-
 	}
 
+	static int fps = 0, frameCount = 0;
+
 	public static void main(String[] args) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					while (true) {
+						fps = frameCount;
+						frameCount = 0;
+						Thread.sleep(1000);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		
 		// train();
 		VideoCapture vc = new VideoCapture();
 		vc.open(0);
@@ -112,8 +129,11 @@ public class Entrance {
 				int reserveParams = 4 + 4;
 				z.rowRange(0, reserveParams).copyTo(nxtPts.rowRange(0, reserveParams));
 				rsi.setCurPts(sm.getXfromZ(nxtPts));
-
+				Imgproc.putText(sPic, "fps : " + fps, new Point(20, pic.height() - 20), Core.FONT_HERSHEY_PLAIN, 1,
+						new Scalar(0, 0, 255), 2);
 				ImUtils.imshow(win, sPic, 1);
+				
+				frameCount++;
 				System.gc();
 
 			}
