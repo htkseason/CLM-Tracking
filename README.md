@@ -14,7 +14,7 @@ __Using Condition__
 __Demo__  
 <img src="https://github.com/htkseason/CLM-Tracking/blob/master/demo.jpg" width="75%" />
   
-<img src="https://github.com/htkseason/CLM-Tracking/blob/master/demo-patch-visualization.jpg" width="75%" />  
+<img src="https://github.com/htkseason/CLM-Tracking/blob/master/demo-patch-visualization.png" width="75%" />  
   
 ----
   
