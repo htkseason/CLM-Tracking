@@ -1,4 +1,4 @@
-function [] = ana(index)
+function [] = analysis(index)
 maxloc= load(strcat('maxloc_'+string(index)));
 theta= load(strcat('theta_'+string(index)));
 theta=reshape(theta, size(theta,1)*size(theta,2),1);
