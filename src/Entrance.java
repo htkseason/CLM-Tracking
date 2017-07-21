@@ -14,10 +14,10 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
-import pers.season.vml.statistics.regressor.LearningParams;
-import pers.season.vml.statistics.regressor.RegressorSet;
-import pers.season.vml.statistics.regressor.RegressorSetInstance;
-import pers.season.vml.statistics.regressor.RegressorTrain;
+import pers.season.vml.ml.LearningParams;
+import pers.season.vml.statistics.patch.PatchSet;
+import pers.season.vml.statistics.patch.PatchSetInstance;
+import pers.season.vml.statistics.patch.PatchTrain;
 import pers.season.vml.statistics.shape.ShapeInstance;
 import pers.season.vml.statistics.shape.ShapeModel;
 import pers.season.vml.statistics.shape.ShapeModelTrain;
@@ -50,20 +50,22 @@ public class Entrance {
 				}
 			}
 		}).start();
-		
-		// train();
+
+		//MuctData.init(jpgPath, ptsFile, ignore);
+		//PatchTrain.train("models/patch/", new Size(100,100), new Size(41,41));
+
 		VideoCapture vc = new VideoCapture();
 		vc.open(0);
 
-		MuctData.init("e:/muct/jpg", "e:/muct/muct76-opencv.csv", MuctData.no_ignore);
+		
 		// ShapeModelTrain.train("models/shape/", 0.90, false);
-
 		ShapeModel sm = ShapeModel.load("models/shape/", "V", "Z_e");
 		// ShapeModelTrain.visualize(sm);
 
-		FaceDetector fd = FaceDetector.load("models/lbpcascade_frontalface.xml");
-		RegressorSet rs = RegressorSet.load("models/regressor/", "patch_76_size61", "refShape", new Size(61, 61));
-		RegressorSetInstance rsi = new RegressorSetInstance(rs);
+		// FaceDetector fd = FaceDetector.load("models/lbpcascade_frontalface.xml");
+		FaceDetector fd = FaceDetector.load("models/haarcascade_frontalface_default.xml");
+		PatchSet rs = PatchSet.load("models/patch/", "patch_76_61x61", "refShape", new Size(61, 61));
+		PatchSetInstance rsi = new PatchSetInstance(rs);
 
 		JFrame win = new JFrame();
 
@@ -76,7 +78,6 @@ public class Entrance {
 				pic = new Mat();
 				vc.read(pic);
 				Imgproc.cvtColor(pic, pic, Imgproc.COLOR_BGR2GRAY);
-				// ImUtils.imshow(pic);
 				Rect[] faceRectList = fd.searchFace(pic);
 				faceRect = faceRectList.length == 0 ? null : faceRectList[0];
 				ImUtils.imshow(win, pic, 1);
@@ -132,7 +133,7 @@ public class Entrance {
 				Imgproc.putText(sPic, "fps : " + fps, new Point(20, pic.height() - 20), Core.FONT_HERSHEY_PLAIN, 1,
 						new Scalar(0, 0, 255), 2);
 				ImUtils.imshow(win, sPic, 1);
-				
+
 				frameCount++;
 				System.gc();
 
@@ -140,18 +141,4 @@ public class Entrance {
 		}
 	}
 
-	public static void train() {
-		MuctData.init("e:/muct/jpg", "e:/muct/muct76-opencv.csv", new int[] {});
-		Mat refShape = RegressorTrain.getRefShape(100, 100);
-		ImUtils.saveMat(refShape, "models/regressor/refShape");
-		Mat thetaSet = new Mat();
-		for (int i = 0; i < MuctData.getPtsCounts(); i++) {
-			System.out.println("training patch " + i + " ...");
-			Mat theta = RegressorTrain.trainLinearModel(refShape, i, new Size(61, 61), new Size(61, 61), 3, 0.2,
-					new LearningParams());
-			thetaSet.push_back(theta.t());
-			System.gc();
-		}
-		ImUtils.saveMat(thetaSet.t(), "models/regressor/patch_" + MuctData.getPtsCounts());
-	}
 }
